@@ -1,1616 +1,32 @@
-// // // import React, { useEffect, useState } from 'react';
-// // // import axios from 'axios';
-
-// // // function Attendance({ darkmode }) {
-// // //   const days = Array.from({ length: 31 }, (_, i) => i + 1);
-// // //   const [attendanceData, setAttendanceData] = useState([]);
-
-// // //   useEffect(() => {
-// // //     const getAttendance = async () => {
-// // //       try {
-// // //         const response = await axios.get('https://phdashboard-backend.onrender.com/ph/api/attendance/getdata');
-// // //         const latestData = getLatestRecordsByEmployee(response.data.data);
-// // //         setAttendanceData(latestData);
-// // //       } catch (err) {
-// // //         console.error(err.message);
-// // //       }
-// // //     };
-// // //     getAttendance();
-// // //   }, []);
-
-// // //   const getLatestRecordsByEmployee = (data) => {
-// // //     const recordMap = new Map();
-// // //     data.forEach(entry => {
-// // //       const existing = recordMap.get(entry.emp_code);
-// // //       if (!existing || new Date(entry.upload_date) > new Date(existing.upload_date)) {
-// // //         recordMap.set(entry.emp_code, entry);
-// // //       }
-// // //     });
-// // //     return Array.from(recordMap.values());
-// // //   };
-
-// // //   const countStatus = (records, status) => records.filter(r => r === status).length;
-
-// // //   const containerClasses = darkmode ? 'bg-gray-900 text-gray-100' : 'bg-white text-gray-800';
-// // //   const tableClasses = darkmode ? 'bg-gray-800 text-gray-100 border-gray-600' : 'bg-white text-gray-800 border-gray-300';
-// // //   const headerClasses = darkmode ? 'bg-gray-700 border-gray-600' : 'bg-gray-100 border-gray-300';
-// // //   const cellClasses = darkmode ? 'border-gray-600' : 'border-gray-300';
-// // //   const presentClasses = darkmode ? 'text-green-400' : 'text-green-700';
-// // //   const absentClasses = darkmode ? 'text-red-400' : 'text-red-700';
-
-// // //   return (
-    
-// // //      <div className='p-6 w-full'>
-// // //                     <div className={` p-6   overflow-x-auto  max-w-[1200px] ${containerClasses}`}>
-// // //        <h2 className="text-2xl font-bold mb-4">Attendance Tracking</h2>
-// // //        <div className={`p-4 rounded shadow overflow-auto ${tableClasses}`}>
-// // //          <h2 className="text-xl font-bold mb-4">🕒 Monthly Attendance (Latest Only)</h2>
-// // //          <table className={` min-w-max border border-collapse text-sm ${tableClasses}`}>
-// // //          <thead>
-// // //              <tr className={headerClasses}>
-// // //                <th className={`border px-2 py-1 ${cellClasses}`}>S.No</th>
-// // //                <th className={`border px-2 py-1 ${cellClasses}`}>Emp. Code</th>
-// // //                <th className={`border px-2 py-1 ${cellClasses}`}>Emp. Name</th>
-// // //                {days.map(day => (
-// // //                 <th key={day} className={`border px-2 py-1 text-center ${cellClasses}`}>{day}</th>
-// // //               ))}
-// // //               <th className={`border px-2 py-1 ${presentClasses}`}>Total P</th>
-// // //               <th className={`border px-2 py-1 ${absentClasses}`}>Total A</th>
-// // //             </tr>
-// // //           </thead>
-// // //           <tbody>
-// // //             {attendanceData.map((agent, index) => {
-// // //               const records = agent.attendance_records.split(',');
-// // //               const totalP = countStatus(records, 'P');
-// // //               const totalA = countStatus(records, 'A');
-// // //               return (
-// // //                 <tr key={agent.id} className={index % 2 === 0 ? (darkmode ? 'bg-gray-800' : 'bg-white') : (darkmode ? 'bg-gray-700' : 'bg-gray-50')}>
-// // //                   <td className={`border px-2 py-1 text-center ${cellClasses}`}>{index + 1}</td>
-// // //                   <td className={`border px-2 py-1 font-medium ${cellClasses}`}>{agent.emp_code}</td>
-// // //                   <td className={`border px-2 py-1 font-medium ${cellClasses}`}>{agent.emp_name}</td>
-// // //                   {days.map((_, i) => (
-// // //                     <td key={i} className={`border px-2 py-1 text-center ${cellClasses} ${
-// // //                       records[i] === 'P' ? presentClasses : 
-// // //                       records[i] === 'A' ? absentClasses : ''
-// // //                     }`}>
-// // //                       {records[i] || '-'}
-// // //                     </td>
-// // //                   ))}
-// // //                   <td className={`border px-2 py-1 text-center font-bold ${presentClasses}`}>{totalP}</td>
-// // //                   <td className={`border px-2 py-1 text-center font-bold ${absentClasses}`}>{totalA}</td>
-// // //                 </tr>
-// // //               );
-// // //             })}
-// // //           </tbody>
-// // //         </table>
-// // //       </div>
-// // //     </div>
-
-// // //      </div>
-   
-   
-    
-// // //   );
-// // // }
-
-// // // export default Attendance;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// // import React, { useEffect, useState } from 'react';
-// // import axios from 'axios';
-// // import * as XLSX from 'xlsx';
-// // import { Bar } from 'react-chartjs-2';
-// // import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
-
-// // ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
-
-// // function Attendance({ darkmode }) {
-// //   const days = Array.from({ length: 31 }, (_, i) => i + 1);
-// //   const [attendanceData, setAttendanceData] = useState([]);
-// //   const [datewiseStats, setDatewiseStats] = useState([]);
-
-// //   useEffect(() => {
-// //     const getAttendance = async () => {
-// //       try {
-// //         const response = await axios.get('https://phdashboard-backend.onrender.com/ph/api/attendance/getdata');
-// //         const latestData = getLatestRecordsByEmployee(response.data.data);
-// //         setAttendanceData(latestData);
-// //         calculateDatewiseStats(latestData);
-// //       } catch (err) {
-// //         console.error(err.message);
-// //       }
-// //     };
-// //     getAttendance();
-// //   }, []);
-
-// //   const calculateDatewiseStats = (data) => {
-// //     const stats = days.map(day => {
-// //       let present = 0;
-// //       let absent = 0;
-      
-// //       data.forEach(employee => {
-// //         const records = employee.attendance_records.split(',');
-// //         if (records[day - 1] === 'P') present++;
-// //         if (records[day - 1] === 'A') absent++;
-// //       });
-      
-// //       return {
-// //         day,
-// //         present,
-// //         absent
-// //       };
-// //     });
-    
-// //     setDatewiseStats(stats);
-// //   };
-
-// //   const getLatestRecordsByEmployee = (data) => {
-// //     const recordMap = new Map();
-// //     data.forEach(entry => {
-// //       const existing = recordMap.get(entry.emp_code);
-// //       if (!existing || new Date(entry.upload_date) > new Date(existing.upload_date)) {
-// //         recordMap.set(entry.emp_code, entry);
-// //       }
-// //     });
-// //     return Array.from(recordMap.values());
-// //   };
-
-// //   const countStatus = (records, status) => records.filter(r => r === status).length;
-
-// //   const handleExport = () => {
-// //     const wb = XLSX.utils.book_new();
-    
-// //     // Prepare data for Excel
-// //     const excelData = attendanceData.map(agent => {
-// //       const records = agent.attendance_records.split(',');
-// //       return {
-// //         'S.No': agent.id,
-// //         'Emp. Code': agent.emp_code,
-// //         'Emp. Name': agent.emp_name,
-// //         ...days.reduce((acc, day, index) => {
-// //           acc[`Day ${day}`] = records[index] || '-';
-// //           return acc;
-// //         }, {}),
-// //         'Total Present': countStatus(records, 'P'),
-// //         'Total Absent': countStatus(records, 'A')
-// //       };
-// //     });
-    
-// //     const ws = XLSX.utils.json_to_sheet(excelData);
-// //     XLSX.utils.book_append_sheet(wb, ws, "Attendance");
-// //     XLSX.writeFile(wb, "attendance_report.xlsx");
-// //   };
-
-// //   const containerClasses = darkmode ? 'bg-gray-900 text-gray-100' : 'bg-white text-gray-800';
-// //   const tableClasses = darkmode ? 'bg-gray-800 text-gray-100 border-gray-600' : 'bg-white text-gray-800 border-gray-300';
-// //   const headerClasses = darkmode ? 'bg-gray-700 border-gray-600' : 'bg-gray-100 border-gray-300';
-// //   const cellClasses = darkmode ? 'border-gray-600' : 'border-gray-300';
-// //   const presentClasses = darkmode ? 'text-green-400' : 'text-green-700';
-// //   const absentClasses = darkmode ? 'text-red-400' : 'text-red-700';
-// //   const buttonClasses = darkmode 
-// //     ? 'bg-blue-600 hover:bg-blue-700 text-white' 
-// //     : 'bg-blue-500 hover:bg-blue-600 text-white';
-
-// //   // Chart data
-// //   const chartData = {
-// //     labels: datewiseStats.map(stat => stat.day),
-// //     datasets: [
-// //       {
-// //         label: 'Present',
-// //         data: datewiseStats.map(stat => stat.present),
-// //         backgroundColor: darkmode ? 'rgba(74, 222, 128, 0.7)' : 'rgba(74, 222, 128, 0.5)',
-// //         borderColor: darkmode ? 'rgba(74, 222, 128, 1)' : 'rgba(74, 222, 128, 1)',
-// //         borderWidth: 1,
-// //       },
-// //       {
-// //         label: 'Absent',
-// //         data: datewiseStats.map(stat => stat.absent),
-// //         backgroundColor: darkmode ? 'rgba(248, 113, 113, 0.7)' : 'rgba(248, 113, 113, 0.5)',
-// //         borderColor: darkmode ? 'rgba(248, 113, 113, 1)' : 'rgba(248, 113, 113, 1)',
-// //         borderWidth: 1,
-// //       },
-// //     ],
-// //   };
-
-// //   const chartOptions = {
-// //     responsive: true,
-// //     plugins: {
-// //       legend: {
-// //         position: 'top',
-// //         labels: {
-// //           color: darkmode ? '#f3f4f6' : '#111827',
-// //         }
-// //       },
-// //       title: {
-// //         display: true,
-// //         text: 'Daily Attendance Summary',
-// //         color: darkmode ? '#f3f4f6' : '#111827',
-// //       },
-// //     },
-// //     scales: {
-// //       x: {
-// //         ticks: {
-// //           color: darkmode ? '#f3f4f6' : '#111827',
-// //         },
-// //         grid: {
-// //           color: darkmode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
-// //         }
-// //       },
-// //       y: {
-// //         ticks: {
-// //           color: darkmode ? '#f3f4f6' : '#111827',
-// //         },
-// //         grid: {
-// //           color: darkmode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
-// //         }
-// //       }
-// //     }
-// //   };
-
-// //   return (
-// //     <div className='p-6 w-full'>
-// //       <div className={`p-6 overflow-x-auto max-w-[1200px] ${containerClasses}`}>
-// //         <div className="flex justify-between items-center mb-4">
-// //           <h2 className="text-2xl font-bold">Attendance Tracking</h2>
-// //           <button 
-// //             onClick={handleExport}
-// //             className={`px-4 py-2 rounded-md font-medium ${buttonClasses}`}
-// //           >
-// //             Export to Excel
-// //           </button>
-// //         </div>
-
-// //         {/* Chart Section */}
-// //         <div className={`mb-6 p-4 rounded shadow ${tableClasses}`}>
-// //           <h2 className="text-xl font-bold mb-4">📊 Daily Attendance Overview</h2>
-// //           <div className="h-64">
-// //             <Bar data={chartData} options={chartOptions} />
-// //           </div>
-// //         </div>
-
-// //         {/* Table Section */}
-// //         <div className={`p-4 rounded shadow overflow-auto ${tableClasses}`}>
-// //           <h2 className="text-xl font-bold mb-4">🕒 Monthly Attendance (Latest Only)</h2>
-// //           <table className={`min-w-max border border-collapse text-sm ${tableClasses}`}>
-// //             <thead>
-// //               <tr className={headerClasses}>
-// //                 <th className={`border px-2 py-1 ${cellClasses}`}>S.No</th>
-// //                 <th className={`border px-2 py-1 ${cellClasses}`}>Emp. Code</th>
-// //                 <th className={`border px-2 py-1 ${cellClasses}`}>Emp. Name</th>
-// //                 {days.map(day => (
-// //                   <th key={day} className={`border px-2 py-1 text-center ${cellClasses}`}>{day}</th>
-// //                 ))}
-// //                 <th className={`border px-2 py-1 ${presentClasses}`}>Total P</th>
-// //                 <th className={`border px-2 py-1 ${absentClasses}`}>Total A</th>
-// //               </tr>
-// //             </thead>
-// //             <tbody>
-// //               {attendanceData.map((agent, index) => {
-// //                 const records = agent.attendance_records.split(',');
-// //                 const totalP = countStatus(records, 'P');
-// //                 const totalA = countStatus(records, 'A');
-// //                 return (
-// //                   <tr key={agent.id} className={index % 2 === 0 ? (darkmode ? 'bg-gray-800' : 'bg-white') : (darkmode ? 'bg-gray-700' : 'bg-gray-50')}>
-// //                     <td className={`border px-2 py-1 text-center ${cellClasses}`}>{index + 1}</td>
-// //                     <td className={`border px-2 py-1 font-medium ${cellClasses}`}>{agent.emp_code}</td>
-// //                     <td className={`border px-2 py-1 font-medium ${cellClasses}`}>{agent.emp_name}</td>
-// //                     {days.map((_, i) => (
-// //                       <td key={i} className={`border px-2 py-1 text-center ${cellClasses} ${
-// //                         records[i] === 'P' ? presentClasses : 
-// //                         records[i] === 'A' ? absentClasses : ''
-// //                       }`}>
-// //                         {records[i] || '-'}
-// //                       </td>
-// //                     ))}
-// //                     <td className={`border px-2 py-1 text-center font-bold ${presentClasses}`}>{totalP}</td>
-// //                     <td className={`border px-2 py-1 text-center font-bold ${absentClasses}`}>{totalA}</td>
-// //                   </tr>
-// //                 );
-// //               })}
-// //             </tbody>
-// //           </table>
-// //         </div>
-// //       </div>
-// //     </div>
-// //   );
-// // }
-
-// // export default Attendance;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import React, { useEffect, useState } from 'react';
-// import axios from 'axios';
-// import * as XLSX from 'xlsx';
-// import { Bar } from 'react-chartjs-2';
-// import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
-
-// ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
-
-// function Attendance({ darkmode }) {
-//   const days = Array.from({ length: 31 }, (_, i) => i + 1);
-//   const [attendanceData, setAttendanceData] = useState([]);
-//   const [datewiseStats, setDatewiseStats] = useState([]);
-//   const [showGraph, setShowGraph] = useState(false); // State to toggle between table and graph
-
-//   useEffect(() => {
-//     const getAttendance = async () => {
-//       try {
-//         const response = await axios.get('https://phdashboard-backend.onrender.com/ph/api/attendance/getdata');
-//         const latestData = getLatestRecordsByEmployee(response.data.data);
-//         setAttendanceData(latestData);
-//         calculateDatewiseStats(latestData);
-//       } catch (err) {
-//         console.error(err.message);
-//       }
-//     };
-//     getAttendance();
-//   }, []);
-
-//   const calculateDatewiseStats = (data) => {
-//     const stats = days.map(day => {
-//       let present = 0;
-//       let absent = 0;
-      
-//       data.forEach(employee => {
-//         const records = employee.attendance_records.split(',');
-//         if (records[day - 1] === 'P') present++;
-//         if (records[day - 1] === 'A') absent++;
-//       });
-      
-//       return {
-//         day,
-//         present,
-//         absent
-//       };
-//     });
-    
-//     setDatewiseStats(stats);
-//   };
-
-//   const getLatestRecordsByEmployee = (data) => {
-//     const recordMap = new Map();
-//     data.forEach(entry => {
-//       const existing = recordMap.get(entry.emp_code);
-//       if (!existing || new Date(entry.upload_date) > new Date(existing.upload_date)) {
-//         recordMap.set(entry.emp_code, entry);
-//       }
-//     });
-//     return Array.from(recordMap.values());
-//   };
-
-//   const countStatus = (records, status) => records.filter(r => r === status).length;
-
-//   const handleExport = () => {
-//     const wb = XLSX.utils.book_new();
-    
-//     const excelData = attendanceData.map(agent => {
-//       const records = agent.attendance_records.split(',');
-//       return {
-//         'S.No': agent.id,
-//         'Emp. Code': agent.emp_code,
-//         'Emp. Name': agent.emp_name,
-//         ...days.reduce((acc, day, index) => {
-//           acc[`Day ${day}`] = records[index] || '-';
-//           return acc;
-//         }, {}),
-//         'Total Present': countStatus(records, 'P'),
-//         'Total Absent': countStatus(records, 'A')
-//       };
-//     });
-    
-//     const ws = XLSX.utils.json_to_sheet(excelData);
-//     XLSX.utils.book_append_sheet(wb, ws, "Attendance");
-//     XLSX.writeFile(wb, "attendance_report.xlsx");
-//   };
-
-//   const toggleView = () => {
-//     setShowGraph(!showGraph);
-//   };
-
-//   const containerClasses = darkmode ? 'bg-gray-900 text-gray-100' : 'bg-white text-gray-800';
-//   const tableClasses = darkmode ? 'bg-gray-800 text-gray-100 border-gray-600' : 'bg-white text-gray-800 border-gray-300';
-//   const headerClasses = darkmode ? 'bg-gray-700 border-gray-600' : 'bg-gray-100 border-gray-300';
-//   const cellClasses = darkmode ? 'border-gray-600' : 'border-gray-300';
-//   const presentClasses = darkmode ? 'text-green-400' : 'text-green-700';
-//   const absentClasses = darkmode ? 'text-red-400' : 'text-red-700';
-//   const buttonClasses = darkmode 
-//     ? 'bg-blue-600 hover:bg-blue-700 text-white' 
-//     : 'bg-blue-500 hover:bg-blue-600 text-white';
-//   const toggleButtonClasses = darkmode
-//     ? 'bg-purple-600 hover:bg-purple-700 text-white'
-//     : 'bg-purple-500 hover:bg-purple-600 text-white';
-
-//   // Chart data
-//   const chartData = {
-//     labels: datewiseStats.map(stat => stat.day),
-//     datasets: [
-//       {
-//         label: 'Present',
-//         data: datewiseStats.map(stat => stat.present),
-//         backgroundColor: darkmode ? 'rgba(74, 222, 128, 0.7)' : 'rgba(74, 222, 128, 0.5)',
-//         borderColor: darkmode ? 'rgba(74, 222, 128, 1)' : 'rgba(74, 222, 128, 1)',
-//         borderWidth: 1,
-//       },
-//       {
-//         label: 'Absent',
-//         data: datewiseStats.map(stat => stat.absent),
-//         backgroundColor: darkmode ? 'rgba(248, 113, 113, 0.7)' : 'rgba(248, 113, 113, 0.5)',
-//         borderColor: darkmode ? 'rgba(248, 113, 113, 1)' : 'rgba(248, 113, 113, 1)',
-//         borderWidth: 1,
-//       },
-//     ],
-//   };
-
-//   const chartOptions = {
-//     responsive: true,
-//     plugins: {
-//       legend: {
-//         position: 'top',
-//         labels: {
-//           color: darkmode ? '#f3f4f6' : '#111827',
-//         }
-//       },
-//       title: {
-//         display: true,
-//         text: 'Daily Attendance Summary',
-//         color: darkmode ? '#f3f4f6' : '#111827',
-//       },
-//     },
-//     scales: {
-//       x: {
-//         ticks: {
-//           color: darkmode ? '#f3f4f6' : '#111827',
-//         },
-//         grid: {
-//           color: darkmode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
-//         }
-//       },
-//       y: {
-//         ticks: {
-//           color: darkmode ? '#f3f4f6' : '#111827',
-//         },
-//         grid: {
-//           color: darkmode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
-//         }
-//       }
-//     }
-//   };
-
-//   return (
-//     <div className='p-6 w-full'>
-//       <div className={`p-6 overflow-x-auto max-w-[1200px] ${containerClasses}`}>
-//         <div className="flex justify-between items-center mb-4">
-//           <h2 className="text-2xl font-bold">Attendance Tracking</h2>
-//           <div className="flex gap-2">
-//             <button 
-//               onClick={toggleView}
-//               className={`px-4 py-2 rounded-md font-medium ${toggleButtonClasses}`}
-//             >
-//               {showGraph ? 'Show Table' : 'View Graph'}
-//             </button>
-//             <button 
-//               onClick={handleExport}
-//               className={`px-4 py-2 rounded-md font-medium ${buttonClasses}`}
-//             >
-//               Export to Excel
-//             </button>
-//           </div>
-//         </div>
-
-//         {showGraph ? (
-//           /* Graph View */
-//           <div className={`mb-6 p-4 rounded shadow ${tableClasses}`}>
-//             <h2 className="text-xl font-bold mb-4">📊 Daily Attendance Overview</h2>
-//             <div className="h-64">
-//               <Bar data={chartData} options={chartOptions} />
-//             </div>
-//           </div>
-//         ) : (
-//           /* Table View */
-//           <div className={`p-4 rounded shadow overflow-auto ${tableClasses}`}>
-//             <h2 className="text-xl font-bold mb-4">🕒 Monthly Attendance (Latest Only)</h2>
-//             <table className={`min-w-max border border-collapse text-sm ${tableClasses}`}>
-//               <thead>
-//                 <tr className={headerClasses}>
-//                   <th className={`border px-2 py-1 ${cellClasses}`}>S.No</th>
-//                   <th className={`border px-2 py-1 ${cellClasses}`}>Emp. Code</th>
-//                   <th className={`border px-2 py-1 ${cellClasses}`}>Emp. Name</th>
-//                   {days.map(day => (
-//                     <th key={day} className={`border px-2 py-1 text-center ${cellClasses}`}>{day}</th>
-//                   ))}
-//                   <th className={`border px-2 py-1 ${presentClasses}`}>Total P</th>
-//                   <th className={`border px-2 py-1 ${absentClasses}`}>Total A</th>
-//                 </tr>
-//               </thead>
-//               <tbody>
-//                 {attendanceData.map((agent, index) => {
-//                   const records = agent.attendance_records.split(',');
-//                   const totalP = countStatus(records, 'P');
-//                   const totalA = countStatus(records, 'A');
-//                   return (
-//                     <tr key={agent.id} className={index % 2 === 0 ? (darkmode ? 'bg-gray-800' : 'bg-white') : (darkmode ? 'bg-gray-700' : 'bg-gray-50')}>
-//                       <td className={`border px-2 py-1 text-center ${cellClasses}`}>{index + 1}</td>
-//                       <td className={`border px-2 py-1 font-medium ${cellClasses}`}>{agent.emp_code}</td>
-//                       <td className={`border px-2 py-1 font-medium ${cellClasses}`}>{agent.emp_name}</td>
-//                       {days.map((_, i) => (
-//                         <td key={i} className={`border px-2 py-1 text-center ${cellClasses} ${
-//                           records[i] === 'P' ? presentClasses : 
-//                           records[i] === 'A' ? absentClasses : ''
-//                         }`}>
-//                           {records[i] || '-'}
-//                         </td>
-//                       ))}
-//                       <td className={`border px-2 py-1 text-center font-bold ${presentClasses}`}>{totalP}</td>
-//                       <td className={`border px-2 py-1 text-center font-bold ${absentClasses}`}>{totalA}</td>
-//                     </tr>
-//                   );
-//                 })}
-//               </tbody>
-//             </table>
-//           </div>
-//         )}
-//       </div>
-//     </div>
-//   );
-// }
-
-// export default Attendance;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import React, { useEffect, useState } from 'react';
-// import axios from 'axios';
-// import * as XLSX from 'xlsx';
-// import { Bar } from 'react-chartjs-2';
-// import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
-
-// ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
-
-// function Attendance({ darkmode }) {
-//   const days = Array.from({ length: 31 }, (_, i) => i + 1);
-//   const [attendanceData, setAttendanceData] = useState([]);
-//   const [datewiseStats, setDatewiseStats] = useState([]);
-//   const [showGraph, setShowGraph] = useState(false);
-//   const [currentMonth] = useState(new Date().getMonth() + 1); // Get current month (1-12)
-//   const [currentYear] = useState(new Date().getFullYear()); // Get current year
-
-//   useEffect(() => {
-//     const getAttendance = async () => {
-//       try {
-//         const response = await axios.get('https://phdashboard-backend.onrender.com/ph/api/attendance/getdata');
-//         const latestData = getLatestRecordsByEmployee(response.data.data);
-//         setAttendanceData(latestData);
-//         calculateDatewiseStats(latestData);
-//       } catch (err) {
-//         console.error(err.message);
-//       }
-//     };
-//     getAttendance();
-//   }, []);
-
-
-
-//   /////////////////////////////////////////////////////////////////////////////////////////////
-
-//    const [filters, setFilters] = useState({ process: '', am: '' });
-
-
-
-
-//     const groupedData = Object.values(grouped)
-//     .map((item) => {
-//       const percent = ((item.recovered / item.allocated) * 100).toFixed(2);
-//       return {
-//         ...item,
-//         percent,
-//         esauRating: getESAUCategory(percent),
-//       };
-//     })
-//     .filter(item =>
-//       (!filters.process || item.process === filters.process) &&
-//       (!filters.am || item.am === filters.am) &&
-//       (!filters.tl || item.tl === filters.tl) &&
-//       (!filters.esau || item.esauRating === filters.esau)
-//     );
-
-// ////////////////////////////////////////////////////////////////////////////////////////////////////
-//   const calculateDatewiseStats = (data) => {
-//     const stats = days.map(day => {
-//       let present = 0;
-//       let absent = 0;
-      
-//       data.forEach(employee => {
-//         const records = employee.attendance_records.split(',');
-//         if (day <= records.length) {
-//           if (records[day - 1] === 'P') present++;
-//           if (records[day - 1] === 'A') absent++;
-//         }
-//       });
-      
-//       return {
-
-// {/* Filters */}
-//       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-//         {['process', 'am', 'tl'].map((key) => (
-//           <select
-//             key={key}
-//             value={filters[key]}
-//             onChange={(e) => setFilters({ ...filters, [key]: e.target.value })}
-//             className={`border ${borderColor} rounded-lg p-2 w-full ${selectBgColor}`}
-//           >
-//             <option value="" className={placeholderColor}>{`Select ${key.toUpperCase()}`}</option>
-//             {uniqueValues(key).map((val, idx) => (
-//               <option key={idx} value={val} className={darkMode ? 'bg-gray-800' : ''}>{val}</option>
-//             ))}
-//           </select>
-//         ))}
-        
-//         day,
-//         date: new Date(currentYear, currentMonth - 1, day).toLocaleDateString('en-US', { 
-//           month: 'short', 
-//           day: 'numeric' 
-//         }),
-//         present,
-//         absent
-//       };
-//     });
-    
-//     setDatewiseStats(stats);
-//   };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//   // ... (keep all other existing functions the same)
-
-//   // Chart data with date labels
-//   const chartData = {
-//     labels: datewiseStats.map(stat => stat.date), // Use formatted dates
-//     datasets: [
-//       {
-//         label: 'Present',
-//         data: datewiseStats.map(stat => stat.present),
-//         backgroundColor: darkmode ? 'rgba(74, 222, 128, 0.7)' : 'rgba(74, 222, 128, 0.5)',
-//         borderColor: darkmode ? 'rgba(74, 222, 128, 1)' : 'rgba(74, 222, 128, 1)',
-//         borderWidth: 1,
-//       },
-//       {
-//         label: 'Absent',
-//         data: datewiseStats.map(stat => stat.absent),
-//         backgroundColor: darkmode ? 'rgba(248, 113, 113, 0.7)' : 'rgba(248, 113, 113, 0.5)',
-//         borderColor: darkmode ? 'rgba(248, 113, 113, 1)' : 'rgba(248, 113, 113, 1)',
-//         borderWidth: 1,
-//       },
-//     ],
-//   };
-
-//   const chartOptions = {
-//     responsive: true,
-//     maintainAspectRatio: false, // Allow custom height
-//     plugins: {
-//       legend: {
-//         position: 'top',
-//         labels: {
-//           color: darkmode ? '#f3f4f6' : '#111827',
-//         }
-//       },
-//       title: {
-//         display: true,
-//         text: `Daily Attendance Summary - ${new Date(currentYear, currentMonth - 1).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}`,
-//         color: darkmode ? '#f3f4f6' : '#111827',
-//       },
-//       tooltip: {
-//         callbacks: {
-//           label: function(context) {
-//             return `${context.dataset.label}: ${context.raw}`;
-//           }
-//         }
-//       }
-//     },
-//     scales: {
-//       x: {
-//         ticks: {
-//           color: darkmode ? '#f3f4f6' : '#111827',
-//           maxRotation: 45,
-//           minRotation: 45,
-//           autoSkip: false
-//         },
-//         grid: {
-//           color: darkmode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
-//         }
-//       },
-//       y: {
-//         beginAtZero: true,
-//         max: Math.max(...datewiseStats.map(stat => Math.max(stat.present, stat.absent))) + 1,
-//         ticks: {
-//           stepSize: 1,
-//           precision: 0,
-//           color: darkmode ? '#f3f4f6' : '#111827',
-//         },
-//         grid: {
-//           color: darkmode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
-//         }
-//       }
-//     }
-//   };
-
-
-
-
-
-
-
-
-   
-
-//   const getLatestRecordsByEmployee = (data) => {
-//     const recordMap = new Map();
-//     data.forEach(entry => {
-//       const existing = recordMap.get(entry.emp_code);
-//       if (!existing || new Date(entry.upload_date) > new Date(existing.upload_date)) {
-//         recordMap.set(entry.emp_code, entry);
-//       }
-//     });
-//     return Array.from(recordMap.values());
-//   };
-
-//   const countStatus = (records, status) => records.filter(r => r === status).length;
-
-//   const handleExport = () => {
-//     const wb = XLSX.utils.book_new();
-    
-//     const excelData = attendanceData.map(agent => {
-//       const records = agent.attendance_records.split(',');
-//       return {
-//         'S.No': agent.id,
-//         'Emp. Code': agent.emp_code,
-//         'Emp. Name': agent.emp_name,
-//         ...days.reduce((acc, day, index) => {
-//           acc[`Day ${day}`] = records[index] || '-';
-//           return acc;
-//         }, {}),
-//         'Total Present': countStatus(records, 'P'),
-//         'Total Absent': countStatus(records, 'A')
-//       };
-//     });
-    
-//     const ws = XLSX.utils.json_to_sheet(excelData);
-//     XLSX.utils.book_append_sheet(wb, ws, "Attendance");
-//     XLSX.writeFile(wb, "attendance_report.xlsx");
-//   };
-
-//   const toggleView = () => {
-//     setShowGraph(!showGraph);
-//   };
-
-//   const containerClasses = darkmode ? 'bg-gray-900 text-gray-100' : 'bg-white text-gray-800';
-//   const tableClasses = darkmode ? 'bg-gray-800 text-gray-100 border-gray-600' : 'bg-white text-gray-800 border-gray-300';
-//   const headerClasses = darkmode ? 'bg-gray-700 border-gray-600' : 'bg-gray-100 border-gray-300';
-//   const cellClasses = darkmode ? 'border-gray-600' : 'border-gray-300';
-//   const presentClasses = darkmode ? 'text-green-400' : 'text-green-700';
-//   const absentClasses = darkmode ? 'text-red-400' : 'text-red-700';
-//   const buttonClasses = darkmode 
-//     ? 'bg-blue-600 hover:bg-blue-700 text-white' 
-//     : 'bg-blue-500 hover:bg-blue-600 text-white';
-//   const toggleButtonClasses = darkmode
-//     ? 'bg-purple-600 hover:bg-purple-700 text-white'
-//     : 'bg-purple-500 hover:bg-purple-600 text-white';
-
-//   // Chart data
-
-
-
-
-
-
-
-//   return (
-//     <div className='p-6 w-full'>
-//       <div className={`p-6 overflow-x-auto max-w-[1200px] ${containerClasses}`}>
-//         <div className="flex justify-between items-center mb-4">
-//           <h2 className="text-2xl font-bold">Attendance Tracking</h2>
-//           <div className="flex gap-2">
-//             <button 
-//               onClick={toggleView}
-//               className={`px-4 py-2 rounded-md font-medium ${toggleButtonClasses}`}
-//             >
-//               {showGraph ? 'Show Table' : 'View Graph'}
-//             </button>
-//             {!showGraph && (
-//               <button 
-//                 onClick={handleExport}
-//                 className={`px-4 py-2 rounded-md font-medium ${buttonClasses}`}
-//               >
-//                 Export to Excel
-//               </button>
-//             )}
-//           </div>
-//         </div>
-
-//         {showGraph ? (
-//           /* Graph View */
-//           <div className={`mb-6 p-4 rounded shadow ${tableClasses}`}>
-//             <h2 className="text-xl font-bold mb-4">📊 Daily Attendance Overview</h2>
-//             <div className="h-[500px] w-full"> {/* Increased height for better visibility */}
-//               <Bar data={chartData} options={chartOptions} />
-//             </div>
-//           </div>
-//         ) : (
-//           /* Table View (keep your existing table implementation) */
-//           // ... (your existing table JSX)
-
-//             <div className={`p-4 rounded shadow overflow-auto ${tableClasses}`}>
-//              <h2 className="text-xl font-bold mb-4">🕒 Monthly Attendance (Latest Only)</h2>
-//              <table className={`min-w-max border border-collapse text-sm ${tableClasses}`}>
-//                <thead>
-//                  <tr className={headerClasses}>
-//                    <th className={`border px-2 py-1 ${cellClasses}`}>S.No</th>
-//                    <th className={`border px-2 py-1 ${cellClasses}`}>Emp. Code</th>
-//                    <th className={`border px-2 py-1 ${cellClasses}`}>Emp. Name</th>
-//                    {days.map(day => (
-//                     <th key={day} className={`border px-2 py-1 text-center ${cellClasses}`}>{day}</th>
-//                   ))}
-//                   <th className={`border px-2 py-1 ${presentClasses}`}>Total P</th>
-//                   <th className={`border px-2 py-1 ${absentClasses}`}>Total A</th>
-//                 </tr>
-//               </thead>
-//               <tbody>
-//                 {attendanceData.map((agent, index) => {
-//                   const records = agent.attendance_records.split(',');
-//                   const totalP = countStatus(records, 'P');
-//                   const totalA = countStatus(records, 'A');
-//                   return (
-//                     <tr key={agent.id} className={index % 2 === 0 ? (darkmode ? 'bg-gray-800' : 'bg-white') : (darkmode ? 'bg-gray-700' : 'bg-gray-50')}>
-//                       <td className={`border px-2 py-1 text-center ${cellClasses}`}>{index + 1}</td>
-//                       <td className={`border px-2 py-1 font-medium ${cellClasses}`}>{agent.emp_code}</td>
-//                       <td className={`border px-2 py-1 font-medium ${cellClasses}`}>{agent.emp_name}</td>
-//                       {days.map((_, i) => (
-//                         <td key={i} className={`border px-2 py-1 text-center ${cellClasses} ${
-//                           records[i] === 'P' ? presentClasses : 
-//                           records[i] === 'A' ? absentClasses : ''
-//                         }`}>
-//                           {records[i] || '-'}
-//                         </td>
-//                       ))}
-//                       <td className={`border px-2 py-1 text-center font-bold ${presentClasses}`}>{totalP}</td>
-//                       <td className={`border px-2 py-1 text-center font-bold ${absentClasses}`}>{totalA}</td>
-//                     </tr>
-//                   );
-//                 })}
-//               </tbody>
-//             </table>
-//           </div>
-//         )}
-//       </div>
-//     </div>
-//   );
-// }
-
-// export default Attendance;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import React, { useEffect, useState } from 'react';
-// import axios from 'axios';
-// import * as XLSX from 'xlsx';
-// import { Bar } from 'react-chartjs-2';
-// import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
-
-// ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
-
-// function Attendance({ darkmode }) {
-//   const days = Array.from({ length: 31 }, (_, i) => i + 1);
-//   const [attendanceData, setAttendanceData] = useState([]);
-//   const [datewiseStats, setDatewiseStats] = useState([]);
-//   const [showGraph, setShowGraph] = useState(false);
-//   const [filters, setFilters] = useState({ process: '', am: '', tl: '' });
-//   const [currentMonth] = useState(new Date().getMonth() + 1);
-//   const [currentYear] = useState(new Date().getFullYear());
-
-//   useEffect(() => {
-//     const getAttendance = async () => {
-//       try {
-//         const response = await axios.get('https://phdashboard-backend.onrender.com/ph/api/attendance/getdata');
-//         const latestData = getLatestRecordsByEmployee(response.data.data);
-//         setAttendanceData(latestData);
-//       } catch (err) {
-//         console.error(err.message);
-//       }
-//     };
-//     getAttendance();
-//   }, []);
-
-//   useEffect(() => {
-//     if (attendanceData.length) {
-//       const filteredData = attendanceData.filter(item =>
-//         (!filters.process || item.process === filters.process) &&
-//         (!filters.am || item.am === filters.am) &&
-//         (!filters.tl || item.tl === filters.tl)
-//       );
-//       calculateDatewiseStats(filteredData);
-//     }
-//   }, [filters, attendanceData]);
-
-//   const calculateDatewiseStats = (data) => {
-//     const stats = days.map(day => {
-//       let present = 0;
-//       let absent = 0;
-
-//       data.forEach(employee => {
-//         const records = employee.attendance_records.split(',');
-//         if (day <= records.length) {
-//           if (records[day - 1] === 'P') present++;
-//           if (records[day - 1] === 'A') absent++;
-//         }
-//       });
-
-//       return {
-//         day,
-//         date: new Date(currentYear, currentMonth - 1, day).toLocaleDateString('en-US', {
-//           month: 'short',
-//           day: 'numeric'
-//         }),
-//         present,
-//         absent
-//       };
-//     });
-
-//     setDatewiseStats(stats);
-//   };
-
-//   const getLatestRecordsByEmployee = (data) => {
-//     const recordMap = new Map();
-//     data.forEach(entry => {
-//       const existing = recordMap.get(entry.emp_code);
-//       if (!existing || new Date(entry.upload_date) > new Date(existing.upload_date)) {
-//         recordMap.set(entry.emp_code, entry);
-//       }
-//     });
-//     return Array.from(recordMap.values());
-//   };
-
-//   const countStatus = (records, status) => records.filter(r => r === status).length;
-
-//   const handleExport = () => {
-//     const filteredData = attendanceData.filter(item =>
-//       (!filters.process || item.process === filters.process) &&
-//       (!filters.am || item.am === filters.am) &&
-//       (!filters.tl || item.tl === filters.tl)
-//     );
-
-//     const wb = XLSX.utils.book_new();
-//     const excelData = filteredData.map(agent => {
-//       const records = agent.attendance_records.split(',');
-//       return {
-//         'S.No': agent.id,
-//         'Emp. Code': agent.emp_code,
-//         'Emp. Name': agent.emp_name,
-//         ...days.reduce((acc, day, index) => {
-//           acc[`Day ${day}`] = records[index] || '-';
-//           return acc;
-//         }, {}),
-//         'Total Present': countStatus(records, 'P'),
-//         'Total Absent': countStatus(records, 'A')
-//       };
-//     });
-
-//     const ws = XLSX.utils.json_to_sheet(excelData);
-//     XLSX.utils.book_append_sheet(wb, ws, "Attendance");
-//     XLSX.writeFile(wb, "attendance_report.xlsx");
-//   };
-
-//   const toggleView = () => {
-//     setShowGraph(!showGraph);
-//   };
-
-//   const filteredData = attendanceData.filter(item =>
-//     (!filters.process || item.process === filters.process) &&
-//     (!filters.am || item.am === filters.am) &&
-//     (!filters.tl || item.tl === filters.tl)
-//   );
-
-//   const chartData = {
-//     labels: datewiseStats.map(stat => stat.date),
-//     datasets: [
-//       {
-//         label: 'Present',
-//         data: datewiseStats.map(stat => stat.present),
-//         backgroundColor: darkmode ? 'rgba(74, 222, 128, 0.7)' : 'rgba(74, 222, 128, 0.5)',
-//         borderColor: darkmode ? 'rgba(74, 222, 128, 1)' : 'rgba(74, 222, 128, 1)',
-//         borderWidth: 1,
-//       },
-//       {
-//         label: 'Absent',
-//         data: datewiseStats.map(stat => stat.absent),
-//         backgroundColor: darkmode ? 'rgba(248, 113, 113, 0.7)' : 'rgba(248, 113, 113, 0.5)',
-//         borderColor: darkmode ? 'rgba(248, 113, 113, 1)' : 'rgba(248, 113, 113, 1)',
-//         borderWidth: 1,
-//       },
-//     ],
-//   };
-
-//   const chartOptions = {
-//     responsive: true,
-//     maintainAspectRatio: false,
-//     plugins: {
-//       legend: {
-//         position: 'top',
-//         labels: {
-//           color: darkmode ? '#f3f4f6' : '#111827',
-//         }
-//       },
-//       title: {
-//         display: true,
-//         text: `Daily Attendance Summary - ${new Date(currentYear, currentMonth - 1).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}`,
-//         color: darkmode ? '#f3f4f6' : '#111827',
-//       },
-//     },
-//     scales: {
-//       x: {
-//         ticks: {
-//           color: darkmode ? '#f3f4f6' : '#111827',
-//           maxRotation: 45,
-//           minRotation: 45,
-//           autoSkip: false
-//         },
-//         grid: {
-//           color: darkmode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
-//         }
-//       },
-//       y: {
-//         beginAtZero: true,
-//         max: Math.max(...datewiseStats.map(stat => Math.max(stat.present, stat.absent))) + 1,
-//         ticks: {
-//           stepSize: 1,
-//           precision: 0,
-//           color: darkmode ? '#f3f4f6' : '#111827',
-//         },
-//         grid: {
-//           color: darkmode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
-//         }
-//       }
-//     }
-//   };
-
-//   const containerClasses = darkmode ? 'bg-gray-900 text-gray-100' : 'bg-white text-gray-800';
-//   const tableClasses = darkmode ? 'bg-gray-800 text-gray-100 border-gray-600' : 'bg-white text-gray-800 border-gray-300';
-//   const headerClasses = darkmode ? 'bg-gray-700 border-gray-600' : 'bg-gray-100 border-gray-300';
-//   const cellClasses = darkmode ? 'border-gray-600' : 'border-gray-300';
-//   const presentClasses = darkmode ? 'text-green-400' : 'text-green-700';
-//   const absentClasses = darkmode ? 'text-red-400' : 'text-red-700';
-//   const buttonClasses = darkmode 
-//     ? 'bg-blue-600 hover:bg-blue-700 text-white' 
-//     : 'bg-blue-500 hover:bg-blue-600 text-white';
-//   const toggleButtonClasses = darkmode
-//     ? 'bg-purple-600 hover:bg-purple-700 text-white'
-//     : 'bg-purple-500 hover:bg-purple-600 text-white';
-
-//   return (
-//     <div className='p-6 w-full'>
-//       <div className={`p-6 overflow-x-auto max-w-[1200px] ${containerClasses}`}>
-//         <div className="flex justify-between items-center mb-4">
-//           <h2 className="text-2xl font-bold">Attendance Tracking</h2>
-//           <div className="flex gap-2">
-//             <button 
-//               onClick={toggleView}
-//               className={`px-4 py-2 rounded-md font-medium ${toggleButtonClasses}`}
-//             >
-//               {showGraph ? 'Show Table' : 'View Graph'}
-//             </button>
-//             {!showGraph && (
-//               <button 
-//                 onClick={handleExport}
-//                 className={`px-4 py-2 rounded-md font-medium ${buttonClasses}`}
-//               >
-//                 Export to Excel
-//               </button>
-//             )}
-//           </div>
-//         </div>
-
-//         {/* Filters */}
-//         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-//           {['process', 'am', 'tl'].map((key) => (
-//             <select
-//               key={key}
-//               value={filters[key]}
-//               onChange={(e) => setFilters({ ...filters, [key]: e.target.value })}
-//               className="border rounded-lg p-2 w-full"
-//             >
-//               <option value="">{`Select ${key.toUpperCase()}`}</option>
-//               {[...new Set(attendanceData.map(item => item[key]))]
-//                 .filter(Boolean)
-//                 .map((val, idx) => (
-//                   <option key={idx} value={val}>{val}</option>
-//                 ))
-//               }
-//             </select>
-//           ))}
-//         </div>
-
-//         {showGraph ? (
-//           <div className={`mb-6 p-4 rounded shadow ${tableClasses}`}>
-//             <h2 className="text-xl font-bold mb-4">📊 Daily Attendance Overview</h2>
-//             <div className="h-[500px] w-full">
-//               <Bar data={chartData} options={chartOptions} />
-//             </div>
-//           </div>
-//         ) : (
-//           <div className={`p-4 rounded shadow overflow-auto ${tableClasses}`}>
-//             <h2 className="text-xl font-bold mb-4">🕒 Monthly Attendance (Latest Only)</h2>
-//             <table className={`min-w-max border border-collapse text-sm ${tableClasses}`}>
-//               <thead>
-//                 <tr className={headerClasses}>
-//                   <th className={`border px-2 py-1 ${cellClasses}`}>S.No</th>
-//                   <th className={`border px-2 py-1 ${cellClasses}`}>Emp. Code</th>
-//                   <th className={`border px-2 py-1 ${cellClasses}`}>Emp. Name</th>
-//                   {days.map(day => (
-//                     <th key={day} className={`border px-2 py-1 text-center ${cellClasses}`}>{day}</th>
-//                   ))}
-//                   <th className={`border px-2 py-1 ${presentClasses}`}>Total P</th>
-//                   <th className={`border px-2 py-1 ${absentClasses}`}>Total A</th>
-//                 </tr>
-//               </thead>
-//               <tbody>
-//                 {filteredData.map((agent, index) => {
-//                   const records = agent.attendance_records.split(',');
-//                   const totalP = countStatus(records, 'P');
-//                   const totalA = countStatus(records, 'A');
-//                   return (
-//                     <tr key={agent.id} className={index % 2 === 0 ? (darkmode ? 'bg-gray-800' : 'bg-white') : (darkmode ? 'bg-gray-700' : 'bg-gray-50')}>
-//                       <td className={`border px-2 py-1 text-center ${cellClasses}`}>{index + 1}</td>
-//                       <td className={`border px-2 py-1 font-medium ${cellClasses}`}>{agent.emp_code}</td>
-//                       <td className={`border px-2 py-1 font-medium ${cellClasses}`}>{agent.emp_name}</td>
-//                       {days.map((_, i) => (
-//                         <td key={i} className={`border px-2 py-1 text-center ${cellClasses} ${
-//                           records[i] === 'P' ? presentClasses : 
-//                           records[i] === 'A' ? absentClasses : ''
-//                         }`}>
-//                           {records[i] || '-'}
-//                         </td>
-//                       ))}
-//                       <td className={`border px-2 py-1 text-center font-bold ${presentClasses}`}>{totalP}</td>
-//                       <td className={`border px-2 py-1 text-center font-bold ${absentClasses}`}>{totalA}</td>
-//                     </tr>
-//                   );
-//                 })}
-//               </tbody>
-//             </table>
-//           </div>
-//         )}
-//       </div>
-//     </div>
-//   );
-// }
-
-// export default Attendance;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import React, { useEffect, useState } from 'react';
-// import axios from 'axios';
-// import * as XLSX from 'xlsx';
-// import { Bar } from 'react-chartjs-2';
-// import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
-
-// ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
-
-// function Attendance({ darkmode , distuser}) {
-//   const days = Array.from({ length: 31 }, (_, i) => i + 1);
-//   const [attendanceData, setAttendanceData] = useState([]);
-//   const [datewiseStats, setDatewiseStats] = useState([]);
-//   const [showGraph, setShowGraph] = useState(false);
-//   const [filters, setFilters] = useState({ process: '', am: '' });
-//   const [processList, setProcessList] = useState([]);
-//   const [amList, setAmList] = useState([]);
-//   const [currentMonth] = useState(new Date().getMonth() + 1);
-//   const [currentYear] = useState(new Date().getFullYear());
-
-//  // Fetch distinct filter values
-//   useEffect(() => {
-//     //console.log("Data Get from attendance",distuser);
-//     const fetchFilters = async () => {
-//       try {
-//         const res = await axios.get('https://phdashboard-backend.onrender.com/ph/api/attendance/getdistint');
-//         console.log("dist process",res.data);
-        
-//         setProcessList(res.data.processes);
-//         setAmList(res.data.ams);
-//       } catch (err) {
-//         console.error('Error loading filter lists', err);
-//       }
-//     };
-//     fetchFilters();
-//   }, []);
-
-
-//   useEffect(()=>{
-//      console.log("set process",processList);
-//      console.log("Am list",amList);
-//   },[])
-
-//   const getAttendance = async (filters) => {
-//     try {
-//       const params = {};
-//       if (filters.process) params.process = filters.process;
-//       if (filters.am) params.am = filters.am;
-
-
-      
-
-//       const res = await axios.get('https://phdashboard-backend.onrender.com/ph/api/attendance/getdata',{ 
-          
-//             params: {
-//     am: params.am,
-//     process: params.process 
-//   }
-
-
-// }
-
-//        );
- 
-
-     
-     
-//       console.log("this is getattedance",res.data);
-//       const latest = getLatestRecordsByEmployee(res.data);
-//       console.log("lastest data is ",latest);
-//       setAttendanceData(latest);
-//       calculateDatewiseStats(latest);
-//     } catch (err) {
-//       console.error('Error fetching attendance', err);
-//     }
-//   };
-
-//   useEffect(() => {
-//     if (filters.process || filters.am) {
-//       getAttendance(filters);
-//     } else {
-//       setAttendanceData([]);
-//       setDatewiseStats([]);
-//     }
-//   }, [filters]);
-
-//   const calculateDatewiseStats = (data) => {
-//     const stats = days.map(day => {
-//       let present = 0, absent = 0;
-//       data.forEach(emp => {
-//         const recs = emp.attendance_records.split(',');
-//         if (day <= recs.length) {
-//           present += recs[day - 1] === 'P';
-//           absent += recs[day - 1] === 'A';
-//         }
-//       });
-//       return {
-//         day,
-//         date: new Date(currentYear, currentMonth - 1, day).toLocaleDateString('en-US', { month: 'short','day':'numeric' }),
-//         present, absent
-//       };
-//     });
-//     setDatewiseStats(stats);
-//   };
-
-//   const getLatestRecordsByEmployee = (data) => {
-//     const map = new Map();
-//     data.forEach(e => {
-//       const prev = map.get(e.emp_code);
-//       if (!prev || new Date(e.upload_date) > new Date(prev.upload_date)) {
-//         map.set(e.emp_code, e);
-//       }
-//     });
-//     return Array.from(map.values());
-//   };
-
-//   const countStatus = (recs, s) => recs.filter(r => r === s).length;
-
-//   const handleExport = () => {
-//     const wb = XLSX.utils.book_new();
-//     const excelData = attendanceData.map((emp, i) => {
-//       const recs = emp.attendance_records.split(',');
-//       return {
-//         'S.No': i + 1,
-//         'Emp. Code': emp.emp_code,
-//         'Emp. Name': emp.emp_name,
-//         ...days.reduce((a, d, idx) => (a[`Day ${d}`] = recs[idx] || '-', a), {}),
-//         'Total Present': countStatus(recs, 'P'),
-//         'Total Absent': countStatus(recs, 'A'),
-//       };
-//     });
-//     const ws = XLSX.utils.json_to_sheet(excelData);
-//     XLSX.utils.book_append_sheet(wb, ws, 'Attendance');
-//     XLSX.writeFile(wb, 'attendance_report.xlsx');
-//   };
-
-//   const toggleView = () => setShowGraph(prev => !prev);
-
-//   const chartData = {
-//     labels: datewiseStats.map(s => s.date),
-//     datasets: [
-//       {
-//         label: 'Present',
-//         data: datewiseStats.map(s => s.present),
-//         backgroundColor: darkmode ? 'rgba(74,222,128,0.7)' : 'rgba(74,222,128,0.5)',
-//         borderColor: 'rgba(74,222,128,1)', borderWidth: 1
-//       },
-//       {
-//         label: 'Absent',
-//         data: datewiseStats.map(s => s.absent),
-//         backgroundColor: darkmode ? 'rgba(248,113,113,0.7)' : 'rgba(248,113,113,0.5)',
-//         borderColor: 'rgba(248,113,113,1)', borderWidth: 1
-//       }
-//     ]
-//   };
-
-//   const chartOptions = {
-//     responsive: true, 
-//     maintainAspectRatio: false,
-//     plugins: {
-//       legend: { position: 'top', labels: { color: darkmode ? '#f3f4f6' : '#111827' } },
-//       title: {
-//         display: true,
-//         text: `Daily Attendance - ${new Date(currentYear, currentMonth - 1).toLocaleDateString('en-US',{month:'long', year:'numeric'})}`,
-//         color: darkmode ? '#f3f4f6' : '#111827'
-//       }
-//     },
-//     scales: {
-//       x: { ticks: { color: darkmode ? '#f3f4f6' : '#111827', maxRotation: 45, minRotation: 45 }, grid: { color: darkmode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' } },
-//       y: { beginAtZero: true, max: Math.max(...datewiseStats.map(s => Math.max(s.present, s.absent))) + 1, ticks: { stepSize: 1, precision: 0, color: darkmode ? '#f3f4f6' : '#111827' }, grid: { color: darkmode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' } }
-//     }
-//   };
-
-//   const classes = {
-//     container: darkmode ? 'bg-gray-900 text-gray-100' : 'bg-white text-gray-800',
-//     table: darkmode ? 'bg-gray-800 text-gray-100 border-gray-600' : 'bg-white text-gray-800 border-gray-300',
-//     header: darkmode ? 'bg-gray-700 border-gray-600' : 'bg-gray-100 border-gray-300',
-//     cell: darkmode ? 'border-gray-600' : 'border-gray-300',
-//     present: darkmode ? 'text-green-400' : 'text-green-700',
-//     absent: darkmode ? 'text-red-400' : 'text-red-700',
-//     button: darkmode ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'bg-blue-500 hover:bg-blue-600 text-white',
-//     toggle: darkmode ? 'bg-purple-600 hover:bg-purple-700 text-white' : 'bg-purple-500 hover:bg-purple-600 text-white',
-//   };
-
-//   return (
-//     <div className="p-6 w-full">
-//       <div className={`p-6 overflow-x-auto max-w-[1200px] ${classes.container}`}>
-//         <div className="flex justify-between items-center mb-4">
-//           <h2 className="text-2xl font-bold">Attendance Tracking</h2>
-//           <div className="flex gap-2">
-//             <button onClick={toggleView} className={`px-4 py-2 rounded-md font-medium ${classes.toggle}`}>
-//               {showGraph ? 'Show Table' : 'View Graph'}
-//             </button>
-//             {!showGraph && (
-//               <button onClick={handleExport} className={`px-4 py-2 rounded-md font-medium ${classes.button}`}>
-//                 Export to Excel
-//               </button>
-//             )}
-//           </div>
-//         </div>
-
-//         {/* Dropdown Filters */}
-//         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-//           <select className="border rounded-lg p-2 w-full" value={filters.process} onChange={e => setFilters(f => ({ ...f, process: e.target.value }))}>
-//             <option value="">Select PROCESS</option>
-//             {processList.map((p, i) => <option key={i} value={p}>{p}</option>)}
-//           </select>
-//           <select className="border rounded-lg p-2 w-full" value={filters.am} onChange={e => setFilters(f => ({ ...f, am: e.target.value }))}>
-//             <option value="">Select AM</option>
-//             {amList.map((a, i) => <option key={i} value={a}>{a}</option>)}
-//           </select>
-//         </div>
-
-//         {showGraph ? (
-//           <div className={`mb-6 p-4 rounded shadow ${classes.table}`}>
-//             <h2 className="text-xl font-bold mb-4">📊 Daily Attendance Overview</h2>
-//             <div className="h-[500px] w-full"><Bar data={chartData} options={chartOptions} /></div>
-//           </div>
-//         ) : (
-//           <div className={`p-4 rounded shadow overflow-auto ${classes.table}`}>
-//             <h2 className="text-xl font-bold mb-4">🕒 Monthly Attendance</h2>
-//             <table className={`min-w-max border border-collapse text-sm ${classes.table}`}>
-//               <thead>
-//                 <tr className={classes.header}>
-//                   <th className={`border px-2 py-1 ${classes.cell}`}>S.No</th>
-//                   <th className={`border px-2 py-1 ${classes.cell}`}>Emp. Code</th>
-//                   <th className={`border px-2 py-1 ${classes.cell}`}>Emp. Name</th>
-//                   {days.map(d => <th key={d} className={`border px-2 py-1 text-center ${classes.cell}`}>{d}</th>)}
-//                   <th className={`border px-2 py-1 ${classes.present}`}>Total P</th>
-//                   <th className={`border px-2 py-1 ${classes.absent}`}>Total A</th>
-//                 </tr>
-//               </thead>
-//               <tbody>
-//                 {attendanceData.map((emp, idx) => {
-//                   const recs = emp.attendance_records.split(',');
-//                   return (
-//                     <tr key={emp.id} className={idx % 2 ? (darkmode ? 'bg-gray-700' : 'bg-gray-50') : (darkmode ? 'bg-gray-800' : 'bg-white')}>
-//                       <td className={`border px-2 py-1 text-center ${classes.cell}`}>{idx + 1}</td>
-//                       <td className={`border px-2 py-1 font-medium ${classes.cell}`}>{emp.emp_code}</td>
-//                       <td className={`border px-2 py-1 font-medium ${classes.cell}`}>{emp.emp_name}</td>
-//                       {days.map((_, i) => (
-//                         <td key={i} className={`border px-2 py-1 text-center ${classes.cell} ${recs[i] === 'P' ? classes.present : recs[i] === 'A' ? classes.absent : ''}`}>
-//                           {recs[i] || '-'}
-//                         </td>
-//                       ))}
-//                       <td className={`border px-2 py-1 text-center font-bold ${classes.present}`}>{countStatus(recs, 'P')}</td>
-//                       <td className={`border px-2 py-1 text-center font-bold ${classes.absent}`}>{countStatus(recs, 'A')}</td>
-//                     </tr>
-//                   );
-//                 })}
-//               </tbody>
-//             </table>
-//           </div>
-//         )}
-//       </div>
-//     </div>
-//   );
-// }
-
-// export default Attendance;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import * as XLSX from 'xlsx';
-import { Bar } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
-
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import * as XLSX from "xlsx";
+import { Bar } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 function Attendance({ darkmode, distuser }) {
-   const days = Array.from({ length: 31 }, (_, i) => i + 1);
+  const days = Array.from({ length: 31 }, (_, i) => i + 1);
   const [attendanceData, setAttendanceData] = useState([]);
   const [datewiseStats, setDatewiseStats] = useState([]);
   const [showGraph, setShowGraph] = useState(false);
-  const [filters, setFilters] = useState({ process: '', am: '' });
+  const [filters, setFilters] = useState({ process: "", am: "" });
   const [processList, setProcessList] = useState([]);
   const [amList, setAmList] = useState([]);
   const [currentMonth] = useState(new Date().getMonth() + 1);
@@ -1620,11 +36,13 @@ function Attendance({ darkmode, distuser }) {
   useEffect(() => {
     const fetchFilters = async () => {
       try {
-        const res = await axios.get('https://phdashboard-backend.onrender.com/ph/api/attendance/getdistint');
+        const res = await axios.get(
+          "https://phdashboard-backend.onrender.com/ph/api/attendance/getdistint"
+        );
         setProcessList(res.data.processes);
         setAmList(res.data.ams);
       } catch (err) {
-        console.error('Error loading filter lists', err);
+        console.error("Error loading filter lists", err);
       }
     };
     fetchFilters();
@@ -1636,12 +54,15 @@ function Attendance({ darkmode, distuser }) {
       if (filters.process) params.process = filters.process;
       if (filters.am) params.am = filters.am;
 
-      const res = await axios.get('https://phdashboard-backend.onrender.com/ph/api/attendance/getdata', { 
-        params: {
-          am: params.am,
-          process: params.process 
+      const res = await axios.get(
+        "https://phdashboard-backend.onrender.com/ph/api/attendance/getdata",
+        {
+          params: {
+            am: params.am,
+            process: params.process,
+          },
         }
-      });
+      );
 
       // Check if response has no data
       if (!res.data.data && res.data.success === true) {
@@ -1652,21 +73,27 @@ function Attendance({ darkmode, distuser }) {
 
       // Handle both array and single object responses
       const responseData = res.data.success ? res.data.data : res.data;
-      
+
       // If responseData is empty or just {success: true}
-      if (!responseData || (typeof responseData === 'object' && Object.keys(responseData).length === 0)) {
+      if (
+        !responseData ||
+        (typeof responseData === "object" &&
+          Object.keys(responseData).length === 0)
+      ) {
         setAttendanceData([]);
         setDatewiseStats([]);
         return;
       }
 
-      const dataToProcess = Array.isArray(responseData) ? responseData : [responseData];
-      
+      const dataToProcess = Array.isArray(responseData)
+        ? responseData
+        : [responseData];
+
       const latest = getLatestRecordsByEmployee(dataToProcess);
       setAttendanceData(latest);
       calculateDatewiseStats(latest);
     } catch (err) {
-      console.error('Error fetching attendance', err);
+      console.error("Error fetching attendance", err);
       setAttendanceData([]);
       setDatewiseStats([]);
     }
@@ -1683,37 +110,32 @@ function Attendance({ darkmode, distuser }) {
 
   // ... rest of your component code remains the same ...
 
-
-
-
-
-
-
-
-
-
-
-
   const calculateDatewiseStats = (data) => {
     if (!data || data.length === 0) {
       setDatewiseStats([]);
       return;
     }
 
-    const stats = days.map(day => {
-      let present = 0, absent = 0;
-      data.forEach(emp => {
-        const recs = emp.attendance_records ? emp.attendance_records.split(',') : [];
+    const stats = days.map((day) => {
+      let present = 0,
+        absent = 0;
+      data.forEach((emp) => {
+        const recs = emp.attendance_records
+          ? emp.attendance_records.split(",")
+          : [];
         if (day <= recs.length) {
-          present += recs[day - 1] === 'P' ? 1 : 0;
-          absent += recs[day - 1] === 'A' ? 1 : 0;
+          present += recs[day - 1] === "P" ? 1 : 0;
+          absent += recs[day - 1] === "A" ? 1 : 0;
         }
       });
       return {
         day,
-        date: new Date(currentYear, currentMonth - 1, day).toLocaleDateString('en-US', { month: 'short', 'day': 'numeric' }),
-        present, 
-        absent
+        date: new Date(currentYear, currentMonth - 1, day).toLocaleDateString(
+          "en-US",
+          { month: "short", day: "numeric" }
+        ),
+        present,
+        absent,
       };
     });
     setDatewiseStats(stats);
@@ -1722,7 +144,7 @@ function Attendance({ darkmode, distuser }) {
   const getLatestRecordsByEmployee = (data) => {
     const dataArray = Array.isArray(data) ? data : [data];
     const map = new Map();
-    dataArray.forEach(e => {
+    dataArray.forEach((e) => {
       const prev = map.get(e.emp_code);
       if (!prev || new Date(e.upload_date) > new Date(prev.upload_date)) {
         map.set(e.emp_code, e);
@@ -1731,112 +153,144 @@ function Attendance({ darkmode, distuser }) {
     return Array.from(map.values());
   };
 
-  const countStatus = (recs, s) => recs.filter(r => r === s).length;
+  const countStatus = (recs, s) => recs.filter((r) => r === s).length;
 
   const handleExport = () => {
     if (attendanceData.length === 0) return;
-    
+
     const wb = XLSX.utils.book_new();
     const excelData = attendanceData.map((emp, i) => {
-      const recs = emp.attendance_records ? emp.attendance_records.split(',') : [];
+      const recs = emp.attendance_records
+        ? emp.attendance_records.split(",")
+        : [];
       return {
-        'S.No': i + 1,
-        'Emp. Code': emp.emp_code,
-        'Emp. Name': emp.emp_name,
-        ...days.reduce((a, d, idx) => (a[`Day ${d}`] = recs[idx] || '-', a), {}),
-        'Total Present': countStatus(recs, 'P'),
-        'Total Absent': countStatus(recs, 'A'),
+        "S.No": i + 1,
+        "Emp. Code": emp.emp_code,
+        "Emp. Name": emp.emp_name,
+        ...days.reduce(
+          (a, d, idx) => ((a[`Day ${d}`] = recs[idx] || "-"), a),
+          {}
+        ),
+        "Total Present": countStatus(recs, "P"),
+        "Total Absent": countStatus(recs, "A"),
       };
     });
     const ws = XLSX.utils.json_to_sheet(excelData);
-    XLSX.utils.book_append_sheet(wb, ws, 'Attendance');
-    XLSX.writeFile(wb, 'attendance_report.xlsx');
+    XLSX.utils.book_append_sheet(wb, ws, "Attendance");
+    XLSX.writeFile(wb, "attendance_report.xlsx");
   };
 
-  const toggleView = () => setShowGraph(prev => !prev);
+  const toggleView = () => setShowGraph((prev) => !prev);
 
   const chartData = {
-    labels: datewiseStats.map(s => s.date),
+    labels: datewiseStats.map((s) => s.date),
     datasets: [
       {
-        label: 'Present',
-        data: datewiseStats.map(s => s.present),
-        backgroundColor: darkmode ? 'rgba(74,222,128,0.7)' : 'rgba(74,222,128,0.5)',
-        borderColor: 'rgba(74,222,128,1)', 
-        borderWidth: 1
+        label: "Present",
+        data: datewiseStats.map((s) => s.present),
+        backgroundColor: darkmode
+          ? "rgba(74,222,128,0.7)"
+          : "rgba(74,222,128,0.5)",
+        borderColor: "rgba(74,222,128,1)",
+        borderWidth: 1,
       },
       {
-        label: 'Absent',
-        data: datewiseStats.map(s => s.absent),
-        backgroundColor: darkmode ? 'rgba(248,113,113,0.7)' : 'rgba(248,113,113,0.5)',
-        borderColor: 'rgba(248,113,113,1)', 
-        borderWidth: 1
-      }
-    ]
+        label: "Absent",
+        data: datewiseStats.map((s) => s.absent),
+        backgroundColor: darkmode
+          ? "rgba(248,113,113,0.7)"
+          : "rgba(248,113,113,0.5)",
+        borderColor: "rgba(248,113,113,1)",
+        borderWidth: 1,
+      },
+    ],
   };
 
   const chartOptions = {
-    responsive: true, 
+    responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: { 
-        position: 'top', 
-        labels: { color: darkmode ? '#f3f4f6' : '#111827' } 
+      legend: {
+        position: "top",
+        labels: { color: darkmode ? "#f3f4f6" : "#111827" },
       },
       title: {
         display: true,
-        text: `Daily Attendance - ${new Date(currentYear, currentMonth - 1).toLocaleDateString('en-US',{month:'long', year:'numeric'})}`,
-        color: darkmode ? '#f3f4f6' : '#111827'
-      }
+        text: `Daily Attendance - ${new Date(
+          currentYear,
+          currentMonth - 1
+        ).toLocaleDateString("en-US", { month: "long", year: "numeric" })}`,
+        color: darkmode ? "#f3f4f6" : "#111827",
+      },
     },
     scales: {
-      x: { 
-        ticks: { 
-          color: darkmode ? '#f3f4f6' : '#111827', 
-          maxRotation: 45, 
-          minRotation: 45 
-        }, 
-        grid: { 
-          color: darkmode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' 
-        } 
+      x: {
+        ticks: {
+          color: darkmode ? "#f3f4f6" : "#111827",
+          maxRotation: 45,
+          minRotation: 45,
+        },
+        grid: {
+          color: darkmode ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)",
+        },
       },
-      y: { 
-        beginAtZero: true, 
-        max: Math.max(...datewiseStats.map(s => Math.max(s.present, s.absent))) + 1, 
-        ticks: { 
-          stepSize: 1, 
-          precision: 0, 
-          color: darkmode ? '#f3f4f6' : '#111827' 
-        }, 
-        grid: { 
-          color: darkmode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' 
-        } 
-      }
-    }
+      y: {
+        beginAtZero: true,
+        max:
+          Math.max(...datewiseStats.map((s) => Math.max(s.present, s.absent))) +
+          1,
+        ticks: {
+          stepSize: 1,
+          precision: 0,
+          color: darkmode ? "#f3f4f6" : "#111827",
+        },
+        grid: {
+          color: darkmode ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)",
+        },
+      },
+    },
   };
 
   const classes = {
-    container: darkmode ? 'bg-gray-900 text-gray-100' : 'bg-white text-gray-800',
-    table: darkmode ? 'bg-gray-800 text-gray-100 border-gray-600' : 'bg-white text-gray-800 border-gray-300',
-    header: darkmode ? 'bg-gray-700 border-gray-600' : 'bg-gray-100 border-gray-300',
-    cell: darkmode ? 'border-gray-600' : 'border-gray-300',
-    present: darkmode ? 'text-green-400' : 'text-green-700',
-    absent: darkmode ? 'text-red-400' : 'text-red-700',
-    button: darkmode ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'bg-blue-500 hover:bg-blue-600 text-white',
-    toggle: darkmode ? 'bg-purple-600 hover:bg-purple-700 text-white' : 'bg-purple-500 hover:bg-purple-600 text-white',
+    container: darkmode
+      ? "bg-gray-900 text-gray-100"
+      : "bg-white text-gray-800",
+    table: darkmode
+      ? "bg-gray-800 text-gray-100 border-gray-600"
+      : "bg-white text-gray-800 border-gray-300",
+    header: darkmode
+      ? "bg-gray-700 border-gray-600"
+      : "bg-gray-100 border-gray-300",
+    cell: darkmode ? "border-gray-600" : "border-gray-300",
+    present: darkmode ? "text-green-400" : "text-green-700",
+    absent: darkmode ? "text-red-400" : "text-red-700",
+    button: darkmode
+      ? "bg-blue-600 hover:bg-blue-700 text-white"
+      : "bg-blue-500 hover:bg-blue-600 text-white",
+    toggle: darkmode
+      ? "bg-purple-600 hover:bg-purple-700 text-white"
+      : "bg-purple-500 hover:bg-purple-600 text-white",
   };
 
   return (
     <div className="p-6 grid md:grid-col-1 lg:grid-col-1">
-      <div className={`p-6 overflow-x-auto max-w-[1200px] ${classes.container}`}>
+      <div
+        className={`p-6 overflow-x-auto max-w-[1200px] ${classes.container}`}
+      >
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold">Attendance Tracking</h2>
           <div className="flex gap-2">
-            <button onClick={toggleView} className={`px-4 py-2 rounded-md font-medium ${classes.toggle}`}>
-              {showGraph ? 'Show Table' : 'View Graph'}
+            <button
+              onClick={toggleView}
+              className={`px-4 py-2 rounded-md font-medium ${classes.toggle}`}
+            >
+              {showGraph ? "Show Table" : "View Graph"}
             </button>
             {!showGraph && attendanceData.length > 0 && (
-              <button onClick={handleExport} className={`px-4 py-2 rounded-md font-medium ${classes.button}`}>
+              <button
+                onClick={handleExport}
+                className={`px-4 py-2 rounded-md font-medium ${classes.button}`}
+              >
                 Export to Excel
               </button>
             )}
@@ -1845,32 +299,46 @@ function Attendance({ darkmode, distuser }) {
 
         {/* Dropdown Filters */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-          <select 
-            className="border rounded-lg p-2 w-full" 
-            value={filters.process} 
-            onChange={e => setFilters(f => ({ ...f, process: e.target.value }))}
+          <select
+            className="border rounded-lg p-2 w-full"
+            value={filters.process}
+            onChange={(e) =>
+              setFilters((f) => ({ ...f, process: e.target.value }))
+            }
           >
             <option value="">Select PROCESS</option>
-            {processList.map((p, i) => <option key={i} value={p}>{p}</option>)}
+            {processList.map((p, i) => (
+              <option key={i} value={p}>
+                {p}
+              </option>
+            ))}
           </select>
-          <select 
-            className="border rounded-lg p-2 w-full" 
-            value={filters.am} 
-            onChange={e => setFilters(f => ({ ...f, am: e.target.value }))}
+          <select
+            className="border rounded-lg p-2 w-full"
+            value={filters.am}
+            onChange={(e) => setFilters((f) => ({ ...f, am: e.target.value }))}
           >
             <option value="">Select AM</option>
-            {amList.map((a, i) => <option key={i} value={a}>{a}</option>)}
+            {amList.map((a, i) => (
+              <option key={i} value={a}>
+                {a}
+              </option>
+            ))}
           </select>
         </div>
 
         {showGraph ? (
           <div className={`mb-6 p-4 rounded shadow ${classes.table}`}>
-            <h2 className="text-xl font-bold mb-4">📊 Daily Attendance Overview</h2>
+            <h2 className="text-xl font-bold mb-4">
+              📊 Daily Attendance Overview
+            </h2>
             <div className="h-[500px] w-full">
               {datewiseStats.length > 0 ? (
                 <Bar data={chartData} options={chartOptions} />
               ) : (
-                <p className="text-center py-10">No data available for the selected filters</p>
+                <p className="text-center py-10">
+                  No data available for the selected filters
+                </p>
               )}
             </div>
           </div>
@@ -1878,45 +346,92 @@ function Attendance({ darkmode, distuser }) {
           <div className={`p-4 rounded shadow overflow-auto ${classes.table}`}>
             <h2 className="text-xl font-bold mb-4">🕒 Monthly Attendance</h2>
             {attendanceData.length > 0 ? (
-              <table className={`min-w-max border border-collapse text-sm ${classes.table}`}>
+              <table
+                className={`min-w-max border border-collapse text-sm ${classes.table}`}
+              >
                 <thead>
                   <tr className={classes.header}>
                     <th className={`border px-2 py-1 ${classes.cell}`}>S.No</th>
-                    <th className={`border px-2 py-1 ${classes.cell}`}>Emp. Code</th>
-                    <th className={`border px-2 py-1 ${classes.cell}`}>Emp. Name</th>
-                    {days.map(d => (
-                      <th key={d} className={`border px-2 py-1 text-center ${classes.cell}`}>{d}</th>
+                    <th className={`border px-2 py-1 ${classes.cell}`}>
+                      Emp. Code
+                    </th>
+                    <th className={`border px-2 py-1 ${classes.cell}`}>
+                      Emp. Name
+                    </th>
+                    {days.map((d) => (
+                      <th
+                        key={d}
+                        className={`border px-2 py-1 text-center ${classes.cell}`}
+                      >
+                        {d}
+                      </th>
                     ))}
-                    <th className={`border px-2 py-1 ${classes.present}`}>Total P</th>
-                    <th className={`border px-2 py-1 ${classes.absent}`}>Total A</th>
+                    <th className={`border px-2 py-1 ${classes.present}`}>
+                      Total P
+                    </th>
+                    <th className={`border px-2 py-1 ${classes.absent}`}>
+                      Total A
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   {attendanceData.map((emp, idx) => {
-                    const recs = emp.attendance_records ? emp.attendance_records.split(',') : [];
+                    const recs = emp.attendance_records
+                      ? emp.attendance_records.split(",")
+                      : [];
                     return (
-                      <tr 
-                        key={emp.id || idx} 
-                        className={idx % 2 ? (darkmode ? 'bg-gray-700' : 'bg-gray-50') : (darkmode ? 'bg-gray-800' : 'bg-white')}
+                      <tr
+                        key={emp.id || idx}
+                        className={
+                          idx % 2
+                            ? darkmode
+                              ? "bg-gray-700"
+                              : "bg-gray-50"
+                            : darkmode
+                            ? "bg-gray-800"
+                            : "bg-white"
+                        }
                       >
-                        <td className={`border px-2 py-1 text-center ${classes.cell}`}>{idx + 1}</td>
-                        <td className={`border px-2 py-1 font-medium ${classes.cell}`}>{emp.emp_code}</td>
-                        <td className={`border px-2 py-1 font-medium ${classes.cell}`}>{emp.emp_name}</td>
+                        <td
+                          className={`border px-2 py-1 text-center ${classes.cell}`}
+                        >
+                          {idx + 1}
+                        </td>
+                        <td
+                          className={`border px-2 py-1 font-medium ${classes.cell}`}
+                        >
+                          {emp.emp_code}
+                        </td>
+                        <td
+                          className={`border px-2 py-1 font-medium ${classes.cell}`}
+                        >
+                          {emp.emp_name}
+                        </td>
                         {days.map((_, i) => (
-                          <td 
-                            key={i} 
-                            className={`border px-2 py-1 text-center ${classes.cell} ${
-                              recs[i] === 'P' ? classes.present : recs[i] === 'A' ? classes.absent : ''
+                          <td
+                            key={i}
+                            className={`border px-2 py-1 text-center ${
+                              classes.cell
+                            } ${
+                              recs[i] === "P"
+                                ? classes.present
+                                : recs[i] === "A"
+                                ? classes.absent
+                                : ""
                             }`}
                           >
-                            {recs[i] || '-'}
+                            {recs[i] || "-"}
                           </td>
                         ))}
-                        <td className={`border px-2 py-1 text-center font-bold ${classes.present}`}>
-                          {countStatus(recs, 'P')}
+                        <td
+                          className={`border px-2 py-1 text-center font-bold ${classes.present}`}
+                        >
+                          {countStatus(recs, "P")}
                         </td>
-                        <td className={`border px-2 py-1 text-center font-bold ${classes.absent}`}>
-                          {countStatus(recs, 'A')}
+                        <td
+                          className={`border px-2 py-1 text-center font-bold ${classes.absent}`}
+                        >
+                          {countStatus(recs, "A")}
                         </td>
                       </tr>
                     );
@@ -1924,7 +439,9 @@ function Attendance({ darkmode, distuser }) {
                 </tbody>
               </table>
             ) : (
-              <p className="text-center py-10">No attendance data available for the selected filters</p>
+              <p className="text-center py-10">
+                No attendance data available for the selected filters
+              </p>
             )}
           </div>
         )}

@@ -8,6 +8,7 @@ import { authContext } from './components/ContextApi/Contextapi';
 
 // import UploadFilesPage from './components/Pages/UplaodFiles'; 
 import AgentDashboard from './components/Agents/AgentDashboard';
+import Nothing from './Nothing';
 
 
 
@@ -54,10 +55,10 @@ const LayoutWrapper = () => {
       <Route
         path="/home"
         element={
-           // <ProtectRoute>
+            // <ProtectRoute>
                <DashboardSection user={user}/>
 
-           // </ProtectRoute>
+            // </ProtectRoute>
             
         
         }
@@ -66,14 +67,16 @@ const LayoutWrapper = () => {
       <Route
         path="/file/system"
         element={ 
-          <ProtectRouteAgent>
+          //<ProtectRouteAgent>
 
           <AgentDashboard/>
 
-          </ProtectRouteAgent>
+         // </ProtectRouteAgent>
 
         }
       />
+
+      <Route path="*" element={<Nothing/>}/>
     </Routes>
   );
 };

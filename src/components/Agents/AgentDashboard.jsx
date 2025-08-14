@@ -3,12 +3,16 @@ import { FiUpload, FiSettings, FiLogOut, FiSun, FiMoon, FiUser, FiChevronRight, 
 import UploadFile from './UploadFile';
 import Settings from './Settings';
 import Paid from './Paid';
-
+import axios from 'axios';
 import { ToastContainer , toast } from 'react-toastify';
-
+import { FaTrophy } from "react-icons/fa";
+import { FaBullseye } from "react-icons/fa";
 
 import  { authContext } from '../ContextApi/Contextapi';
 
+import AddMilestoneForm from './AddMilestoneForm';
+import ListMileStone from './ListMileStone';
+import { useNavigate } from 'react-router-dom';
 const AgentDashboard = () => {
   const [activeTab, setActiveTab] = useState('upload');
   const [darkMode, setDarkMode] = useState(false);
@@ -19,6 +23,8 @@ const AgentDashboard = () => {
 
    const {user } = useContext(authContext);
 
+
+   const navigate = useNavigate();
 
    
 
@@ -45,7 +51,10 @@ const AgentDashboard = () => {
         return <Settings darkMode={darkMode} />;
       case 'paid':
         return <Paid darkMode = {darkMode}/>;
-     
+      case  'milestone':
+        return <AddMilestoneForm darkMode = {darkMode}/>
+      case 'listmilestone':
+         return <ListMileStone darkMode = {darkMode}/>
      
     }
   };
@@ -54,8 +63,13 @@ const AgentDashboard = () => {
     setDarkMode(!darkMode);
   };
 
+
+
+
+
   
 
+  
    const handleLogout = async () => {
     console.log("Call Handle Logout");
     try {
@@ -64,20 +78,26 @@ const AgentDashboard = () => {
         {},
         { withCredentials: true }
       );
+
       console.log("Logout successfully", response.data);
       if (response.data.success) {
         toast.success("Logout Successfully");
-           setTimeout(() => navigate('/' , { replace: true }), 2000);
+        setTimeout(() => navigate('/', { replace: true }), 2000);
       }
     } catch (err) {
       console.error("Logout failed:", err);
     }
   };
 
+
+
+
   const navItems = [
     { id: 'home', label: 'Dashboard', icon: <FiHome className="w-5 h-5" /> },
     { id: 'upload', label: 'Upload Files', icon: <FiUpload className="w-5 h-5" /> },
     { id: 'paid', label: 'Paid', icon: <FiBarChart2 className="w-5 h-5" /> },
+     { id: 'milestone', label: 'MileStone', icon: <FaTrophy className='w-5 h-5'/>},
+     { id: 'listmilestone', label: 'ListMileStone', icon: <FaBullseye className="w-5 h-5" /> },
     { id: 'messages', label: 'Messages', icon: <FiMail className="w-5 h-5" /> },
     { id: 'settings', label: 'Settings', icon: <FiSettings className="w-5 h-5" /> },
     { id: 'help', label: 'Help Center', icon: <FiHelpCircle className="w-5 h-5" /> },
@@ -108,6 +128,7 @@ const AgentDashboard = () => {
               </span>
               Agent<span className="text-blue-500">Dash</span>
             </h1>
+
             <button 
               onClick={() => setSidebarOpen(!sidebarOpen)}
               className="lg:inline-flex hidden p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"
@@ -173,8 +194,8 @@ const AgentDashboard = () => {
                 <FiUser className="w-5 h-5" />
               </div>
               <div className="flex-1">
-                <p className="font-sm">{user?.email.substring(0,16)+"...." || 'User Not Found'}</p>
-                <p className="text-sm text-gray-500 dark:text-gray-400">{user?.Agent || "Agent"}</p>
+                {user?.email ? user.email.substring(0, 16) + "...." : "User Not Found"}
+                <p className="text-sm text-gray-500 dark:text-gray-400">{user?.ims_id || "Agent"}</p>
               </div>
             </div>
           </div>
@@ -215,7 +236,7 @@ const AgentDashboard = () => {
 
         {/* Main content area */}
         <main className="flex-1 overflow-y-auto p-6 bg-gray-50 dark:bg-gray-900">
-          <div className="max-w-6xl mx-auto">
+          <div className="max-auto px-1 mx-auto">
             {renderComponent()}
           </div>
         </main>

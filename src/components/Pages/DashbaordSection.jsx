@@ -21,6 +21,8 @@ import { FaAddressBook } from "react-icons/fa";
 import DashboardContent from './DashboardContent';
 import { MilestoneIcon } from 'lucide-react';
 import MileStoneReports from './MileStoneReports/MileStoneReports'
+import RealMileStone from './MileStoneReports/RealMileStone'
+import { FaCheckCircle } from "react-icons/fa";
 const DashboardSection = ({ user }) => {
   const [activeSection, setActiveSection] = useState('dashboard');
   const [notifications, setNotifications] = useState(3);
@@ -136,7 +138,7 @@ const DashboardSection = ({ user }) => {
             </div>
             <div>
               <div className="font-medium">{user?.email}</div>
-              <div className="text-sm text-gray-400">id: {user?.id}</div>
+              <div className="text-sm text-gray-400">id: {user?.ims_id || "No User Found"}</div>
             </div>
           </div>
         </div>
@@ -159,6 +161,7 @@ const DashboardSection = ({ user }) => {
                 { id : 'adduser' , label : "Add User" , icon : <AiOutlineUserAdd/> },
                  {id : 'addtarget', label : "Add Target", icon : <FaAddressBook/>},
                  {id : 'milestone' , label : "Add MileStone" , icon : <MilestoneIcon/>},
+                 {id : "realmilestone"  , label : "MileStone"  , icon :  <FaCheckCircle/>},
                  { id: 'Settings', label: 'Settings', icon: <FaCog /> },
                 {
   id: 'Logout',
@@ -203,6 +206,7 @@ const DashboardSection = ({ user }) => {
           {activeSection==='adduser' && <Signup darkMode={darkMode}/>}
           {activeSection==='addtarget' && <AddTarget darkmode={darkMode}/>}
           {activeSection==='milestone' && <MileStoneReports darkMode={darkMode}/>}
+          {activeSection==='realmilestone' && <RealMileStone darkMode={darkMode}/>}
           
     
         </div>

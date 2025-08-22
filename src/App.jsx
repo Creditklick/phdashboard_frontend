@@ -55,10 +55,10 @@ const LayoutWrapper = () => {
       <Route
         path="/home"
         element={
-               <ProtectRoute>
+                <ProtectRoute>
                <DashboardSection user={user}/>
 
-              </ProtectRoute>
+               </ProtectRoute>
             
         
         }

@@ -193,7 +193,7 @@ function RealMileStone() {
         </div>
       </div>
 
-      <div className="rounded-md max-w-7xl border overflow-x-auto bg-white dark:bg-gray-800 shadow-md">
+      <div className="rounded-md max-w-sm md:max-w-2xl lg:max-w-5xl xl:max-w-7xl border overflow-x-auto bg-white dark:bg-gray-800 shadow-md">
         <table className="min-w-full w-full border-collapse text-sm text-center">
           <thead className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white sticky top-0">
             <tr>

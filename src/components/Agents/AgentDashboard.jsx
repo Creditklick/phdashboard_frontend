@@ -126,7 +126,7 @@ const AgentDashboard = () => {
               <span className="bg-blue-500 text-white p-2 rounded-lg mr-2">
                 <FiUser className="w-5 h-5" />
               </span>
-              Manager<span className="text-blue-500"></span>
+              Manager
             </h1>
 
             <button 

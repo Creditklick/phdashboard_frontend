@@ -20,7 +20,7 @@ import AddTarget from './AddTarget';
 import { FaAddressBook } from "react-icons/fa";
 import DashboardContent from './DashboardContent';
 import { MilestoneIcon } from 'lucide-react';
-import MileStoneReports from './MileStoneReports/MileStoneReports'
+// import MileStoneReports from './MileStoneReports/MileStoneReports'
 import RealMileStone from './MileStoneReports/RealMileStone'
 import { FaCheckCircle } from "react-icons/fa";
 const DashboardSection = ({ user }) => {
@@ -160,7 +160,7 @@ const DashboardSection = ({ user }) => {
                
                 { id : 'adduser' , label : "Add User" , icon : <AiOutlineUserAdd/> },
                  {id : 'addtarget', label : "Add Target", icon : <FaAddressBook/>},
-                 {id : 'milestone' , label : "Add MileStone" , icon : <MilestoneIcon/>},
+                //  {id : 'milestone' , label : "Add MileStone" , icon : <MilestoneIcon/>},
                  {id : "realmilestone"  , label : "MileStone"  , icon :  <FaCheckCircle/>},
                  { id: 'Settings', label: 'Settings', icon: <FaCog /> },
                 {
@@ -205,7 +205,7 @@ const DashboardSection = ({ user }) => {
           {activeSection === 'Settings' && <Setting darkMode={darkMode} />}
           {activeSection==='adduser' && <Signup darkMode={darkMode}/>}
           {activeSection==='addtarget' && <AddTarget darkmode={darkMode}/>}
-          {activeSection==='milestone' && <MileStoneReports darkMode={darkMode}/>}
+          {/* {activeSection==='milestone' && <MileStoneReports darkMode={darkMode}/>} */}
           {activeSection==='realmilestone' && <RealMileStone darkMode={darkMode}/>}
           
     

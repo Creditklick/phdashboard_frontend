@@ -344,7 +344,7 @@ const Login = () => {
                           </div>
                         </div>
                         <span className="text-gray-300 group-hover:text-white transition-colors duration-300">
-                          Agent
+                          Manager
                         </span>
                       </label>
 
